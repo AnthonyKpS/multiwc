@@ -3,4 +3,8 @@ project(multiwc C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(multiwc main.c)
+add_executable(multiwc main.c multiwc.c multiwc.h)
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+target_link_libraries(multiwc Threads::Threads)
