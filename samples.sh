@@ -17,6 +17,7 @@ create_tests() {
   y | ye | yes)
     bytes=0 # Number of bytes per test
     echo "Generating tests..."
+    echo "This can take up to 2 minutes."
     for ((power = 5; power <= 30; power += 2)); do
       bytes=$((2 ** power))
       tr -dc '[:alnum:] \n' </dev/urandom | head -c $bytes >samples/S"$bytes".txt
