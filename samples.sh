@@ -6,7 +6,7 @@ create_tests() {
   read -r -p "Should 14 samples with varying byte size will be created in a /samples directory? [Y/n]" prompt
 
   # Check if the samples dir exists
-  if [ ! -d "/samples" ]; then
+  if [ ! -d "samples" ]; then
     mkdir samples
   fi
 
@@ -20,7 +20,7 @@ create_tests() {
     echo "This can take up to 2 minutes."
     for ((power = 5; power <= 30; power += 2)); do
       bytes=$((2 ** power))
-      tr -dc '[:alnum:] \n' </dev/urandom | head -c $bytes >samples/S"$bytes".txt
+      tr -dc '[:alnum:] \n' </dev/urandom | head -c $bytes > samples/S"$bytes".txt
     done
     echo "Tests can be found in the /samples dir."
     ;;
