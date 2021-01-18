@@ -10,9 +10,8 @@
  */
 
 #define MAX_BUFFER_READ 1048576 // 1MB
-#define MAX_THREADS_COUNT 16
+#define MAX_THREADS_COUNT 16 // Machine-specific value
 #define MIN_LOAD_PER_THREAD 4
-
 
 /**
  * STRUCTS
@@ -49,13 +48,6 @@ void message(const char* message);
  * @param message String to be printed to STDOUT.
  */
 void die_with_message(const char* msg);
-
-/**
- * Checks if a given path points to a directory
- * @param path
- * @return 1 If path points to a directory. Otherwise, 0.
- */
-int is_dir(const char* path);
 
 /**
  * Traverses the whole file and

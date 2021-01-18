@@ -4,10 +4,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 #include <ctype.h>
 #include <pthread.h>
-#include "multiwc.h"
+#include "../include/multiwc.h"
 
 void message(const char* message)
 {
@@ -18,14 +17,6 @@ void die_with_message(const char* msg)
 {
 	message(msg);
 	exit(EXIT_FAILURE);
-}
-
-int is_dir(const char* path)
-{
-	struct stat stat_b;
-	if (stat(path, &stat_b))
-		return 0;
-	return S_ISDIR(stat_b.st_mode);
 }
 
 int is_ascii_file(FILE* file)
