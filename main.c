@@ -73,30 +73,37 @@ void sig_handler(int signum)
 int main(int argc, char** argv)
 {
 	// Entry
-	puts("====================[ 2nd Assignment | DIT136 | it21927 | MAIN ]=================================");
+	puts("====================[ 2nd Assignment | DIT136 | it21927 | MAIN ]=================================\n");
 
 	// Get the directory's path and it's length
+	char* option = argv[1];
 	const char* dir_path;
 	if (argv[1] == NULL)
 		dir_path = realpath(".", NULL);
 	else
 		dir_path = realpath(argv[1], NULL);
-	size_t dir_path_l = strlen(dir_path);
 
-	printf("Directory given: %s\n\n", dir_path); // path message
+	// opendir() does not accept NULL as a parm so we ought to check
+	if (!dir_path)
+	{
+		printf("The specified directory <%s> could not be opened!\n", option);
+		exit(EXIT_FAILURE);
+	}
 
 	// Make a DIR
 	DIR* dir = opendir(dir_path);
 	if (!dir)
 	{
-		puts("The specified directory could not be opened!");
+		printf("The specified directory <%s> could not be opened!\n", option);
 		exit(EXIT_FAILURE);
 	}
+	printf("Directory given: %s\n\n", dir_path); //
+	size_t dir_path_l = strlen(dir_path);
 
 	// Setup the output.txt file
 	// Using syscall-s "open", "write" and "close" (further in the code)
 	// to take advantage of their atomic behaviour!!!
-	int fp = open("../output.txt",O_WRONLY | O_CREAT, S_IRWXU);
+	int fp = open("output.txt", O_WRONLY | O_CREAT, S_IRWXU);
 	if (fp == -1)
 	{
 		puts("Output file could not be opened");
@@ -159,7 +166,7 @@ int main(int argc, char** argv)
 				write(fp, buffer, strlen(buffer));
 				close(fp);
 
-//				// Message results
+				// Message results
 				printf("[%d%%] PID: %d found %d words in file %s\n", completion(fcount, filenum), getpid(), wcount,
 						file_name);
 
@@ -178,6 +185,6 @@ int main(int argc, char** argv)
 		}
 	}
 	closedir(dir);
-	puts("\nResults are present in the output.txt file that was generated in the root directory.");
+	puts("\nResults are also present in the output.txt file that was generated in the root directory.");
 	return 0;
 }
