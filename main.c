@@ -124,7 +124,7 @@ int main(int argc, char** argv)
 			// Setup the output.txt file
 			// Using syscalls "open", "write" and "close" (further in the code)
 			// to take advantage of their atomic behaviour!!!
-			int fp = open("../output.txt",O_WRONLY | O_APPEND | O_CREAT);
+			int fp = open("output.txt",O_WRONLY | O_APPEND | O_CREAT);
 			if (fp == -1)
 				puts("Output file could not be opened");
 
