@@ -57,6 +57,9 @@ int main(int argc, char** argv)
 
 			// Make a new process
 			pid = fork();
+			if (pid == -1)
+				die_with_message("Process could not be made");
+
 			if (pid == 0)
 			{
 				// Child code
@@ -64,15 +67,18 @@ int main(int argc, char** argv)
 				snprintf(buffer, sizeof(buffer), "%d, %s, %d\n", getpid(), filename, multiwc(file_path));
 				printf("%s", buffer);
 				write(fp, buffer, strlen(buffer));
+				close(fp);
+
 				exit(EXIT_SUCCESS);
 			}
 			else
 			{
+				// Parent code
 				// Treat signals
 				signal(SIGINT, sig_handler);
 				signal(SIGTERM, sig_handler);
 
-				// Parent code
+				// Wait for children to finish
 				wait(NULL);
 			}
 		}

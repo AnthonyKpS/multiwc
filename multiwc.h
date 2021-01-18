@@ -9,7 +9,7 @@
  * DEFINES
  */
 
-#define MAX_BUFFER_READ 16 // 1MB
+#define MAX_BUFFER_READ 1048576 // 1MB
 #define MAX_THREADS_COUNT 16
 #define MIN_LOAD_PER_THREAD 4
 
