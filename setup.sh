@@ -43,6 +43,11 @@ create_tests() {
   local prompt=""
   read -r -p "Generate some tests? [Y/n]" prompt
 
+  # Check if the samples dir exists
+  if [ ! -d "/samples" ]; then
+    mkdir samples
+  fi
+
   # toLowercase prompt for easier check
   prompt=$(echo "$prompt" | tr '[:upper:]' '[:lower:]') # tr-anslate only ECHOES the result hence the "echo" command
 
