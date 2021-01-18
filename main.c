@@ -93,6 +93,13 @@ int main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 
+	// Setup the output.txt file
+	// Using syscall-s "open", "write" and "close" (further in the code)
+	// to take advantage of their atomic behaviour!!!
+	int fp = open("output.txt",O_WRONLY | O_APPEND | O_CREAT);
+	if (fp == -1)
+		puts("Output file could not be opened");
+
 	// wcount for further usage
 	int wcount = 0;
 
@@ -120,13 +127,6 @@ int main(int argc, char** argv)
 		if (!is_dir(file_name))
 		{
 			filenum++;
-
-			// Setup the output.txt file
-			// Using syscalls "open", "write" and "close" (further in the code)
-			// to take advantage of their atomic behaviour!!!
-			int fp = open("output.txt",O_WRONLY | O_APPEND | O_CREAT);
-			if (fp == -1)
-				puts("Output file could not be opened");
 
 			// Get filename's length
 			file_name_l = strlen(file_name);
