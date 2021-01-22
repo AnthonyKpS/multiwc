@@ -7,6 +7,8 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <errno.h>
+#include <time.h>
 #include "include/multiwc.h"
 
 /**
@@ -40,18 +42,6 @@ int file_count(DIR* dir)
 	return fcount;
 }
 
-/**
- * Calculates the completion percentage of the file analysis,
- * given the total number of files and the index of the file
- * being analysed.
- * @param fcount
- * @param filenum
- * @return The completion percentage
- */
-int completion(int fcount, int filenum)
-{
-	return (100 * filenum) / fcount;
-}
 
 /**
  * Handles signals sent to processes by doing nothing except
@@ -113,10 +103,6 @@ int main(int argc, char** argv)
 	// wcount for further usage
 	int wcount = 0;
 
-	// Vars for the eye-candy completion feature
-	int fcount = file_count(dir); // Number of files in the specified dir
-	int filenum = 0; // Individual file index
-
 	// Pid var for further usage
 	pid_t pid;
 
@@ -136,8 +122,6 @@ int main(int argc, char** argv)
 		// If it's a file
 		if (!is_dir(file_name))
 		{
-			filenum++;
-
 			// Get filename's length
 			file_name_l = strlen(file_name);
 
@@ -158,17 +142,24 @@ int main(int argc, char** argv)
 			if (pid == 0)
 			{
 				// Child code
-				char buffer[1024];
+				// Eye-candy timing stats
+				time_t start;
+				time_t end;
+
+				time(&start); // mark the time when the process starts
+
+				// Run multiwc
 				wcount = multiwc(file_path);
 
+				time(&end); // mark the time when wcount returns
+
 				// Build formatted output and write it to file
+				char buffer[1024];
 				snprintf(buffer, sizeof(buffer), "%d, %s, %d\n", getpid(), file_name, wcount);
 				write(fp, buffer, strlen(buffer));
-				close(fp);
 
 				// Message results
-				printf("[%d%%] PID: %d found %d words in file %s\n", completion(fcount, filenum), getpid(), wcount,
-						file_name);
+				printf("PID: %d found %d words in file %s in %lds\n", getpid(), wcount, file_name, end - start);
 
 				exit(EXIT_SUCCESS); // Make sure that the child ends
 			}
@@ -178,12 +169,23 @@ int main(int argc, char** argv)
 				// Treat signals
 				signal(SIGINT, sig_handler);
 				signal(SIGTERM, sig_handler);
-
-				// Wait for children to finish
-				wait(NULL); // Make sure that the parent waits for each children
 			}
 		}
 	}
+
+	// Wait for all my children
+	int wait_status;
+	do
+	{
+		wait_status = wait(NULL);
+		if (wait_status == -1 && errno != ECHILD)
+		{
+			puts("An unexpected error occurred while wait()ing child processes");
+			exit(EXIT_FAILURE);
+		}
+	} while (wait_status > 0);
+
+	close(fp);
 	closedir(dir);
 	puts("\nResults are also present in the output.txt file that was generated in the root directory.");
 	return 0;
