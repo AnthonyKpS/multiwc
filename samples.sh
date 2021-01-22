@@ -3,7 +3,7 @@
 # Generate tests
 create_tests() {
   local prompt=""
-  read -r -p "Should 14 samples with varying byte size will be created in a /samples directory? [Y/n]" prompt
+  read -r -p "Should 14 ASCII formatted samples with varying byte size be created in a /samples directory? [Y/n]" prompt
 
   # Check if the samples dir exists
   if [ ! -d "samples" ]; then
@@ -17,7 +17,7 @@ create_tests() {
   y | ye | yes)
     bytes=0 # Number of bytes per test
     echo "Generating tests..."
-    echo "This can take up to 2 minutes."
+    echo "This can take up to 10 minutes."
     for ((power = 5; power <= 30; power += 2)); do
       bytes=$((2 ** power))
       tr -dc '[:alnum:] \n' </dev/urandom | head -c $bytes > samples/S"$bytes".txt
